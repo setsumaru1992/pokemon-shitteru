@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Generation {
+  id             Int       @id @default(autoincrement())
+  label          String    @db.VarChar(255)
+  globalDexStart Int
+  globalDexEnd   Int
+  pokemons       Pokemon[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@map("generations")
+}
+
+model Pokemon {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  globalDexNo  Int
+  generationId Int
+  generation   Generation @relation(fields: [generationId], references: [id])
+  answers      Answer[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("pokemons")
+}
+
+model Room {
+  id           Int               @id @default(autoincrement())
+  roomCode     String            @unique @map("room_code") @db.VarChar(255)
+  config       Json              @map("config")
+  participants RoomParticipant[]
+  answers      Answer[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@map("rooms")
+}
+
+model Participant {
+  id        Int               @id @default(autoincrement())
+  nickname  String            @db.VarChar(255)
+  sessionId String            @unique @map("session_id") @db.VarChar(255)
+  rooms     RoomParticipant[]
+  answers   Answer[]
+  createdAt DateTime          @default(now())
+  expiresAt DateTime          @map("expires_at")
+
+  @@map("participants")
+}
+
+model RoomParticipant {
+  id            Int         @id @default(autoincrement())
+  roomId        Int         @map("room_id")
+  participantId Int         @map("participant_id")
+  room          Room        @relation(fields: [roomId], references: [id])
+  participant   Participant @relation(fields: [participantId], references: [id])
+  joinedAt      DateTime    @default(now()) @map("joined_at")
+
+  @@unique([roomId, participantId])
+  @@map("room_participants")
+}
+
+model Answer {
+  id            Int         @id @default(autoincrement())
+  roomId        Int         @map("room_id")
+  participantId Int         @map("participant_id")
+  pokemonId     Int         @map("pokemon_id")
+  userAnswer    String      @map("user_answer") @db.VarChar(255)
+  isCorrect     Boolean     @default(false) @map("is_correct")
+  room          Room        @relation(fields: [roomId], references: [id])
+  participant   Participant @relation(fields: [participantId], references: [id])
+  pokemon       Pokemon     @relation(fields: [pokemonId], references: [id])
+  answeredAt    DateTime    @default(now()) @map("answered_at")
+
+  @@map("answers")
+}
