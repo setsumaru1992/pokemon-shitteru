@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pokemon Shitteru (ポケモン知ってる)
 
-## Getting Started
+匿名参加型のポケモンクイズシステムです。ユーザー登録不要で、すぐにクイズルームを作成したり参加したりできます。
 
-First, run the development server:
+## 概要
+
+- **クイズ形式**: 特定の世代のポケモン（例：初代151匹、金銀252匹）について、図鑑番号や名前で回答
+- **参加方法**: ルームを作成し、招待URLで他のユーザーを招待
+- **リアルタイム性**: 他の参加者の回答状況をリアルタイムに確認可能
+
+## 主な機能
+
+- ルームの作成・参加
+- クイズ対象世代の選択
+- ポケモンの名前・図鑑番号による回答
+- リアルタイムな回答状況の表示
+- 匿名でのクイズ参加
+
+## 技術スタック
+
+- **フロントエンド**: Next.js
+- **バックエンド**: Next.js API Routes
+- **データベース**: MySQL
+- **ORM**: Prisma
+- **バリデーション**: Zod
+- **デプロイメント**: AWS Lambda / API Gateway（予定）
+
+## 開発環境のセットアップ
 
 ```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# または Docker を使用する場合
+docker-compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 環境変数の設定
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`.env` ファイルを作成し、必要な環境変数を設定してください：
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# データベース接続設定
+DATABASE_URL="mysql://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}"
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> 注意: 実際の値は開発チームから提供される接続情報を使用してください。

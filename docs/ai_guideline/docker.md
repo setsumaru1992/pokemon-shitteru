@@ -1,5 +1,14 @@
 # Docker環境
 
+## 重要な注意点
+- `docker-compose`コマンドは非推奨です。代わりに`docker compose`を使用してください
+  - `docker compose`はDocker CLIの一部として組み込まれており、より新しい標準実装です
+  - より良いパフォーマンスと将来的なサポートが保証されています
+  - すべてのコマンドは`docker compose`形式で実行してください
+- Compose ファイル（docker-compose.yml）では`version`フィールドは省略可能です
+  - Docker Compose V2以降では不要になりました
+  - 警告を避けるため、新規作成時は省略することを推奨します
+
 ## 基本ルール
 - マルチステージビルドを使用
 - キャッシュを活用
@@ -46,7 +55,6 @@ CMD ["npm", "start"]
 
 ```yaml
 # 良い例
-version: '3.8'
 services:
   app:
     build: .
@@ -67,7 +75,6 @@ services:
         condition: service_healthy
 
 # 悪い例
-version: '3.8'
 services:
   app:
     build: .
@@ -87,7 +94,6 @@ services:
 
 ```yaml
 # 良い例
-version: '3.8'
 services:
   app:
     build: .
@@ -113,7 +119,6 @@ services:
       - ALL
 
 # 悪い例
-version: '3.8'
 services:
   app:
     build: .
@@ -268,7 +273,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
       - name: Build and test
         run: |
-          docker-compose -f docker-compose.test.yml up --build --abort-on-container-exit
+          docker compose -f docker-compose.test.yml up --build --abort-on-container-exit
       - name: Run security scan
         run: |
           docker run --rm -v $(pwd):/app aquasec/trivy image pokemon-quiz-app:latest
@@ -281,7 +286,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy to production
         run: |
-          docker-compose -f docker-compose.prod.yml up -d
+          docker compose -f docker-compose.prod.yml up -d
 
 # 悪い例
 name: CI/CD
@@ -296,5 +301,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Deploy
-        run: docker-compose up -d  # テストなし、セキュリティスキャンなし
+        run: docker compose up -d  # テストなし、セキュリティスキャンなし
 ``` 

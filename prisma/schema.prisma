@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Generation {
+  id              Int       @id @default(autoincrement())
+  label           String    @db.VarChar(255)
+  globalDexStart  Int
+  globalDexEnd    Int
+  pokemons        Pokemon[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("generations")
+}
+
+model Pokemon {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  globalDexNo  Int
+  generationId Int
+  generation   Generation @relation(fields: [generationId], references: [id])
+  answers      Answer[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@map("pokemons")
+}
+
+model Room {
+  id          Int          @id @default(autoincrement())
+  roomCode    String       @unique @db.VarChar(255)
+  quizConfig  Json
+  participants Participant[]
+  answers     Answer[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("rooms")
+}
+
+model Participant {
+  id           Int       @id @default(autoincrement())
+  roomId       Int
+  room         Room      @relation(fields: [roomId], references: [id])
+  nickname     String    @db.VarChar(255)
+  sessionToken String?   @db.VarChar(255)
+  answers      Answer[]
+  joinedAt     DateTime  @default(now())
+
+  @@map("participants")
+}
+
+model Answer {
+  id            Int         @id @default(autoincrement())
+  roomId        Int
+  room          Room        @relation(fields: [roomId], references: [id])
+  participantId Int
+  participant   Participant @relation(fields: [participantId], references: [id])
+  pokemonId     Int
+  pokemon       Pokemon     @relation(fields: [pokemonId], references: [id])
+  userAnswer    String      @db.VarChar(255)
+  isCorrect     Boolean     @default(false)
+  answeredAt    DateTime    @default(now())
+
+  @@map("answers")
+} 

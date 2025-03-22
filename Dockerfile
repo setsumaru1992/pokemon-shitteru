@@ -3,6 +3,9 @@ FROM node:20-slim AS builder
 
 WORKDIR /app
 
+# OpenSSLのインストール
+RUN apt-get update -y && apt-get install -y openssl
+
 COPY package*.json ./
 COPY prisma ./prisma/
 
@@ -18,6 +21,9 @@ FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+
+# OpenSSLのインストール
+RUN apt-get update -y && apt-get install -y openssl
 
 COPY --from=builder /app/next.config.ts ./
 COPY --from=builder /app/public ./public
