@@ -46,3 +46,7 @@ next-env.d.ts
 # temporary prompt files
 /temp-prompts/*.md
 !/temp-prompts/README.md
+
+# temp-prompts archives
+temp-prompts/archives/*
+!temp-prompts/archives/.gitkeep
