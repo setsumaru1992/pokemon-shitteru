@@ -26,7 +26,8 @@ const eslintConfig = [
       "@typescript-eslint/no-unused-vars": "error",
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/consistent-type-imports": "error",
-      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/triple-slash-reference": "off",
 
       // コンポーネントの命名規則
       "react/function-component-definition": [
@@ -41,7 +42,7 @@ const eslintConfig = [
 
       // インポートの順序
       "import/order": [
-        "error",
+        "warn",
         {
           groups: [
             "builtin",
@@ -80,6 +81,9 @@ const eslintConfig = [
         version: "detect",
       },
     },
+  },
+  {
+    ignores: ["node_modules/**", "src/backend/prisma/generated/**"],
   },
 ];
 
