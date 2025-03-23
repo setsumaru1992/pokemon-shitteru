@@ -1,9 +1,10 @@
 import { describe, it, expect } from "vitest";
 
-import testWithDb from "../../../../test/helpers/testWithDb";
-import { CreateRoomCommand } from "../CreateRoomCommand";
+import testWithDb from "../../../test/helpers/testWithDb";
 
-import type { QuizConfig } from "../../types";
+import { CreateRoomCommand } from "./CreateRoomCommand";
+
+import type { QuizConfig } from "../types";
 
 testWithDb(async (prisma) => {
   describe("CreateRoomCommand", () => {

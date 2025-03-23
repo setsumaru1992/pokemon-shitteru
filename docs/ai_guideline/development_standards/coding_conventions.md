@@ -203,4 +203,51 @@ describe('PokemonCard', () => {
 - 安易なカラム名の変更
 - 設計意図を考慮しない変更
 - データ移行コストを考慮しない変更
+```
+
+## ファイル名の命名規則
+- エクスポートするクラスやインターフェースと同じ名前を使用（パスカルケース）
+- ファイル名は機能の責務を明確に表現する
+- テストファイルは`.test.ts`を付加
+
+```typescript
+// 良い例
+RoomRepository.ts        // RoomRepositoryクラスをエクスポート
+GetRoomByCodeQuery.ts   // GetRoomByCodeQueryクラスをエクスポート
+RoomRepository.test.ts  // RoomRepositoryのテスト
+
+// 悪い例
+room-repository.ts      // ケバブケースは使用しない
+roomRepository.ts      // キャメルケースは使用しない
+```
+
+## ディレクトリ構造の遵守
+- 既存のディレクトリ構造を尊重し、新しいディレクトリを作成しない
+- 機能は適切なドメインディレクトリに配置する
+- 例：`src/backend/domain/room`内のファイルは`src/features/room`に移動しない
+
+## テストの実装方法
+- データベースを使用するテストは`testWithDb`でラップする
+- テストは実装と同時に書く
+- テストケースは具体的なシナリオを記述
+- モックは最小限に抑える
+- テストの独立性を保つ
+
+```typescript
+// 良い例
+import testWithDb from "../../test/helpers/testWithDb";
+
+testWithDb(async (prisma) => {
+  const repository = new RoomRepository(prisma);
+  const room = await repository.create({ roomCode: "ABC123" });
+  expect(room.roomCode).toBe("ABC123");
+});
+
+// 悪い例
+describe("RoomRepository", () => {
+  it("creates a room", async () => {
+    const repository = new RoomRepository(prisma);  // testWithDbでラップしていない
+    // ...
+  });
+});
 ``` 

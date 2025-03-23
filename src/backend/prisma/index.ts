@@ -15,6 +15,6 @@ if (process.env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
 
-export type PrismaClientType = typeof PrismaClient | undefined;
+export type PrismaClientType = PrismaClient;
 
 export default prisma;

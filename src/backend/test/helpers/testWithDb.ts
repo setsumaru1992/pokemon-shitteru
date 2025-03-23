@@ -1,4 +1,4 @@
-import { beforeAll, afterAll } from "vitest";
+import { beforeEach, afterAll } from "vitest";
 
 import prisma from "../../prisma";
 
@@ -7,18 +7,16 @@ import type { PrismaClientType } from "../../prisma";
 type TestFunc = (prisma: PrismaClientType) => Promise<void>;
 
 export default (testFunc: TestFunc) => {
-  beforeAll(async () => {
-    // await truncateAll();
+  beforeEach(async () => {
     // テスト用のDBを初期化
     await prisma.$executeRaw`SET FOREIGN_KEY_CHECKS=0`;
     const tableRows =
       await prisma.$queryRaw`SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE()`;
-    tableRows.forEach(async (row) => {
+    for (const row of tableRows) {
       const table = row.TABLE_NAME;
-      if (table.startsWith("_")) return;
+      if (table.startsWith("_")) continue;
       await prisma.$executeRawUnsafe(`DELETE FROM ${table}`);
-    });
-
+    }
     await prisma.$executeRaw`SET FOREIGN_KEY_CHECKS=1`;
   });
 
@@ -26,5 +24,6 @@ export default (testFunc: TestFunc) => {
     await prisma.$disconnect();
   });
 
-  testFunc(prisma);
+  // テストケースを実行
+  return testFunc(prisma);
 };
