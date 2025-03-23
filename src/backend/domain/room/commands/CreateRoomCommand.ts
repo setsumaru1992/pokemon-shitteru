@@ -1,6 +1,6 @@
 import { customAlphabet } from "nanoid";
 
-import { prisma } from "@/backend/prisma/prisma";
+import prisma from "../../../prisma";
 
 import type { QuizConfig } from "../types";
 import type { Room } from "@/backend/prisma/generated/client";
