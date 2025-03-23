@@ -1,12 +1,13 @@
 import { customAlphabet } from "nanoid";
 
-import prisma from "../../../prisma";
+import { RoomRepository } from "../repositories/RoomRepository";
 
+import type { Room } from "../../../prisma/generated/client";
 import type { QuizConfig } from "../types";
-import type { Room } from "@/backend/prisma/generated/client";
 
 export class CreateRoomCommand {
   private readonly generateRoomCode: () => string;
+  private readonly repository: RoomRepository;
 
   constructor() {
     // 大文字英数字のみを使用してランダムな8文字を生成
@@ -14,6 +15,7 @@ export class CreateRoomCommand {
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
       8
     );
+    this.repository = new RoomRepository();
   }
 
   async execute(): Promise<Room> {
@@ -29,14 +31,10 @@ export class CreateRoomCommand {
 
       try {
         // ルームの作成を試みる
-        const room = await prisma.room.create({
-          data: {
-            roomCode,
-            quizConfig: JSON.stringify(quizConfig),
-          },
+        return await this.repository.create({
+          roomCode,
+          quizConfig: JSON.stringify(quizConfig),
         });
-
-        return room;
       } catch (error: unknown) {
         // ユニーク制約違反の場合はリトライ
         if (

@@ -11,8 +11,8 @@
     "prisma:migrate": "prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
     "prisma:migrate:test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=./src/backend/prisma/schema.prisma",
-    "test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest",
-    "test:watch": "vitest watch",
+    "test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest run",
+    "test:watch": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest watch",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
