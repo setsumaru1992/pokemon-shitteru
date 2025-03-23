@@ -11,9 +11,9 @@
     "prisma:migrate": "prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
     "prisma:migrate:test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=./src/backend/prisma/schema.prisma",
-    "test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest run",
-    "test:watch": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest watch",
-    "test:coverage": "vitest run --coverage"
+    "test": "NODE_ENV=test DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest run",
+    "test:watch": "NODE_ENV=test DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest watch",
+    "test:coverage": "NODE_ENV=test DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest run --coverage"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.0",
@@ -23,12 +23,11 @@
     "mysql2": "^3.14.0",
     "nanoid": "^5.1.5",
     "next": "15.2.3",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@babel/plugin-transform-react-jsx": "^7.25.9",
     "@eslint/eslintrc": "^3",
     "@prisma/client": "^6.5.0",
     "@tailwindcss/postcss": "^4",
@@ -39,7 +38,10 @@
     "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
+    "jsdom": "^26.0.0",
     "prisma": "^6.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "tailwindcss": "^4",
     "typescript": "5.8.2",
     "vite-tsconfig-paths": "^5.1.4",
