@@ -40,6 +40,14 @@ testWithDb(async (prisma: PrismaClientType) => {
           },
         });
 
+        // 参加者をルームに追加
+        await tx.roomParticipant.create({
+          data: {
+            roomId: room.id,
+            participantId: participant.id,
+          },
+        });
+
         const generation = await tx.generation.create({
           data: {
             label: "第1世代",

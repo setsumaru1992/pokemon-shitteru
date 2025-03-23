@@ -417,6 +417,10 @@ docs/ai_guideline
    - 環境依存のコマンドは必ずDockerコンテナ内で実行
    - コンテナ名はdocker-compose.ymlで定義されたものを使用
    - コマンド実行前にコンテナの状態を確認
+   - npm install実行後、または`sh: 1: vitest: not found`エラーが発生した場合
+      - 以下のコマンドを実行してコンテナを再起動
+      - docker compose restart && sleep 5
+      - 再起動後すぐは同じエラーが出る可能性があるため、sleepを入れる
    ```
 
 ### 5. タスク完了時の更新ルール
