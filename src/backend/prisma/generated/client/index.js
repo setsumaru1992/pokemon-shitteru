@@ -213,6 +213,14 @@ const config = {
         "fromEnvVar": null,
         "value": "linux-arm64-openssl-3.0.x",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-arm64-openssl-3.0.x"
+      },
+      {
+        "fromEnvVar": null,
+        "value": "darwin-arm64"
       }
     ],
     "previewFeatures": [],
@@ -238,8 +246,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"generated/client\"\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Generation {\n  id             Int       @id @default(autoincrement())\n  label          String    @db.VarChar(255)\n  globalDexStart Int\n  globalDexEnd   Int\n  pokemons       Pokemon[]\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n\n  @@map(\"generations\")\n}\n\nmodel Pokemon {\n  id           Int        @id @default(autoincrement())\n  name         String     @db.VarChar(255)\n  globalDexNo  Int\n  generationId Int\n  generation   Generation @relation(fields: [generationId], references: [id])\n  answers      Answer[]\n  createdAt    DateTime   @default(now())\n  updatedAt    DateTime   @updatedAt\n\n  @@map(\"pokemons\")\n}\n\nmodel Room {\n  id           Int               @id @default(autoincrement())\n  roomCode     String            @unique @map(\"room_code\") @db.VarChar(255)\n  quizConfig   Json              @map(\"quiz_config\")\n  participants RoomParticipant[]\n  answers      Answer[]\n  createdAt    DateTime          @default(now())\n  updatedAt    DateTime          @updatedAt\n\n  @@map(\"rooms\")\n}\n\nmodel Participant {\n  id        Int               @id @default(autoincrement())\n  nickname  String            @db.VarChar(255)\n  sessionId String            @unique @map(\"session_id\") @db.VarChar(255)\n  rooms     RoomParticipant[]\n  answers   Answer[]\n  createdAt DateTime          @default(now())\n  expiresAt DateTime          @map(\"expires_at\")\n\n  @@map(\"participants\")\n}\n\nmodel RoomParticipant {\n  id            Int         @id @default(autoincrement())\n  roomId        Int         @map(\"room_id\")\n  participantId Int         @map(\"participant_id\")\n  room          Room        @relation(fields: [roomId], references: [id])\n  participant   Participant @relation(fields: [participantId], references: [id])\n  joinedAt      DateTime    @default(now()) @map(\"joined_at\")\n\n  @@unique([roomId, participantId])\n  @@map(\"room_participants\")\n}\n\nmodel Answer {\n  id            Int         @id @default(autoincrement())\n  roomId        Int         @map(\"room_id\")\n  participantId Int         @map(\"participant_id\")\n  pokemonId     Int         @map(\"pokemon_id\")\n  userAnswer    String      @map(\"user_answer\") @db.VarChar(255)\n  isCorrect     Boolean     @default(false) @map(\"is_correct\")\n  room          Room        @relation(fields: [roomId], references: [id])\n  participant   Participant @relation(fields: [participantId], references: [id])\n  pokemon       Pokemon     @relation(fields: [pokemonId], references: [id])\n  answeredAt    DateTime    @default(now()) @map(\"answered_at\")\n\n  @@map(\"answers\")\n}\n",
-  "inlineSchemaHash": "6bfbcd953f4e4d6318231ff23e5622adccd1b6dbf185d45a5b66b08f052a4edb",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"generated/client\"\n  binaryTargets = [\"native\", \"linux-arm64-openssl-3.0.x\", \"darwin-arm64\"]\n}\n\ndatasource db {\n  provider = \"mysql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Generation {\n  id             Int       @id @default(autoincrement())\n  label          String    @db.VarChar(255)\n  globalDexStart Int\n  globalDexEnd   Int\n  pokemons       Pokemon[]\n  createdAt      DateTime  @default(now())\n  updatedAt      DateTime  @updatedAt\n\n  @@map(\"generations\")\n}\n\nmodel Pokemon {\n  id           Int        @id @default(autoincrement())\n  name         String     @db.VarChar(255)\n  globalDexNo  Int\n  generationId Int\n  generation   Generation @relation(fields: [generationId], references: [id])\n  answers      Answer[]\n  createdAt    DateTime   @default(now())\n  updatedAt    DateTime   @updatedAt\n\n  @@map(\"pokemons\")\n}\n\nmodel Room {\n  id           Int               @id @default(autoincrement())\n  roomCode     String            @unique @map(\"room_code\") @db.VarChar(255)\n  quizConfig   Json              @map(\"quiz_config\")\n  participants RoomParticipant[]\n  answers      Answer[]\n  createdAt    DateTime          @default(now())\n  updatedAt    DateTime          @updatedAt\n\n  @@map(\"rooms\")\n}\n\nmodel Participant {\n  id        Int               @id @default(autoincrement())\n  nickname  String            @db.VarChar(255)\n  sessionId String            @unique @map(\"session_id\") @db.VarChar(255)\n  rooms     RoomParticipant[]\n  answers   Answer[]\n  createdAt DateTime          @default(now())\n  expiresAt DateTime          @map(\"expires_at\")\n\n  @@map(\"participants\")\n}\n\nmodel RoomParticipant {\n  id            Int         @id @default(autoincrement())\n  roomId        Int         @map(\"room_id\")\n  participantId Int         @map(\"participant_id\")\n  room          Room        @relation(fields: [roomId], references: [id])\n  participant   Participant @relation(fields: [participantId], references: [id])\n  joinedAt      DateTime    @default(now()) @map(\"joined_at\")\n\n  @@unique([roomId, participantId])\n  @@map(\"room_participants\")\n}\n\nmodel Answer {\n  id            Int         @id @default(autoincrement())\n  roomId        Int         @map(\"room_id\")\n  participantId Int         @map(\"participant_id\")\n  pokemonId     Int         @map(\"pokemon_id\")\n  userAnswer    String      @map(\"user_answer\") @db.VarChar(255)\n  isCorrect     Boolean     @default(false) @map(\"is_correct\")\n  room          Room        @relation(fields: [roomId], references: [id])\n  participant   Participant @relation(fields: [participantId], references: [id])\n  pokemon       Pokemon     @relation(fields: [pokemonId], references: [id])\n  answeredAt    DateTime    @default(now()) @map(\"answered_at\")\n\n  @@map(\"answers\")\n}\n",
+  "inlineSchemaHash": "9dccc1eca298f61988d87575e079d475f81524bda2e0c8911b7365712523e564",
   "copyEngine": true
 }
 
@@ -280,6 +288,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-linux-arm64-openssl-3.0.x.so.node");
 path.join(process.cwd(), "src/backend/prisma/generated/client/libquery_engine-linux-arm64-openssl-3.0.x.so.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
+path.join(process.cwd(), "src/backend/prisma/generated/client/libquery_engine-darwin-arm64.dylib.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/backend/prisma/generated/client/schema.prisma")

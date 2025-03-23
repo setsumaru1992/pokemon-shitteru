@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+
 import { CreateRoomCommand } from "@/backend/domain/room/commands/CreateRoomCommand";
 
 const createRoomSchema = z.object({
@@ -8,7 +9,7 @@ const createRoomSchema = z.object({
   }),
 });
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body = await request.json();
     const { generationId } = createRoomSchema.parse(body);

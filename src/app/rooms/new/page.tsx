@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
 import { useCreateRoom } from "@/frontend/features/rooms/useCreateRoom";
 
-export default function NewRoomPage() {
+import type { ReactNode } from "react";
+
+const NewRoomPage = (): ReactNode => {
   const [generationId, setGenerationId] = useState("");
   const { error, roomCode, isLoading, createRoom } = useCreateRoom();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     await createRoom(generationId);
   };
@@ -70,4 +73,6 @@ export default function NewRoomPage() {
       )}
     </div>
   );
-}
+};
+
+export default NewRoomPage;

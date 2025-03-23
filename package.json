@@ -30,6 +30,7 @@
     "@babel/plugin-transform-react-jsx": "^7.25.9",
     "@eslint/eslintrc": "^3",
     "@prisma/client": "^6.5.0",
+    "@stylistic/eslint-plugin": "^4.2.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "20.17.25",
     "@types/react": "19.0.12",

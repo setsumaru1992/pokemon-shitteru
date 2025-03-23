@@ -1,8 +1,9 @@
-import { FastifyInstance } from "fastify";
 import { z } from "zod";
 
 import { CreateParticipantCommand } from "../domain/participant/commands/CreateParticipantCommand";
 import { ParticipantRepository } from "../domain/participant/repositories/ParticipantRepository";
+
+import type { FastifyInstance } from "fastify";
 
 const createParticipantSchema = z.object({
   nickname: z
@@ -12,7 +13,7 @@ const createParticipantSchema = z.object({
     .min(1, "ニックネームは必須です"),
 });
 
-export async function participantRoutes(app: FastifyInstance) {
+export async function participantRoutes(app: FastifyInstance): Promise<void> {
   const repository = new ParticipantRepository();
   const createCommand = new CreateParticipantCommand(repository);
 

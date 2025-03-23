@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 
 import testWithDb from "../../../test/helpers/testWithDb";
+import { CreateParticipantCommand } from "../commands/CreateParticipantCommand";
+import { ParticipantRepository } from "../repositories/ParticipantRepository";
 
 import { GetParticipantQuery } from "./GetParticipantQuery";
-import { ParticipantRepository } from "../repositories/ParticipantRepository";
-import { CreateParticipantCommand } from "../commands/CreateParticipantCommand";
 
 describe("GetParticipantQuery", () => {
   testWithDb(async (_) => {

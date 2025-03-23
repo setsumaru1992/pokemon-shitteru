@@ -1,7 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import NewRoomPage from "./page";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+
 import { useCreateRoom } from "@/frontend/features/rooms/useCreateRoom";
+
+import NewRoomPage from "./page";
+
+import type { UseCreateRoom } from "@/frontend/features/rooms/useCreateRoom";
 
 vi.mock("@/frontend/features/rooms/useCreateRoom", () => ({
   useCreateRoom: vi.fn(),
@@ -13,7 +17,7 @@ describe("NewRoomPage", () => {
   });
 
   it("should render generation selection form", () => {
-    (useCreateRoom as any).mockReturnValue({
+    (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
       error: null,
       roomCode: null,
       isLoading: false,
@@ -30,7 +34,7 @@ describe("NewRoomPage", () => {
   it("should create a room when form is submitted with valid generation", async () => {
     const mockResponse = { roomCode: "ABC123", id: "1" };
     const mockCreateRoom = vi.fn().mockResolvedValueOnce(mockResponse);
-    (useCreateRoom as any).mockReturnValue({
+    (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
       error: null,
       roomCode: "ABC123",
       isLoading: false,
@@ -57,7 +61,7 @@ describe("NewRoomPage", () => {
     const mockCreateRoom = vi
       .fn()
       .mockRejectedValueOnce(new Error("世代が選択されていません"));
-    (useCreateRoom as any).mockReturnValue({
+    (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
       error: "世代が選択されていません",
       roomCode: null,
       isLoading: false,

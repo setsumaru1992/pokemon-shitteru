@@ -81,8 +81,6 @@ const eslintConfig = [
       "react-hooks/exhaustive-deps": "error",
       "react/prop-types": "off", // TypeScriptを使用するため無効化
       "react/react-in-jsx-scope": "off", // Next.jsでは不要
-
-      "@stylistic/no-trailing-spaces": "error",
     },
     settings: {
       "import/resolver": {

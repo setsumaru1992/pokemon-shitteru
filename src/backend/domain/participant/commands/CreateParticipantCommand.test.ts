@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
 import testWithDb from "../../../test/helpers/testWithDb";
+import { ParticipantRepository } from "../repositories/ParticipantRepository";
 
 import { CreateParticipantCommand } from "./CreateParticipantCommand";
-import { ParticipantRepository } from "../repositories/ParticipantRepository";
 
 describe("CreateParticipantCommand", () => {
   testWithDb(async (_) => {

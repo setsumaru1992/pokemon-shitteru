@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 
-import { ParticipantRepository } from "../repositories/ParticipantRepository";
+import type { Participant } from "../../../prisma/generated/client";
+import type { ParticipantRepository } from "../repositories/ParticipantRepository";
 
 export class CreateParticipantCommand {
   constructor(private repository: ParticipantRepository) {}
 
-  async execute(params: { nickname: string }) {
+  async execute(params: { nickname: string }): Promise<Participant> {
     if (!params.nickname) {
       throw new Error("ニックネームは必須です");
     }

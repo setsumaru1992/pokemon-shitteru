@@ -1,7 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
+import { describe, it, expect } from "vitest";
+
 import { POST } from "./route";
-import { testWithDb } from "@/backend/test/helpers/testWithDb";
+// import { testWithDb } from "@/backend/test/helpers/testWithDb";
 
 describe("POST /api/rooms", () => {
   it("should create a room with valid parameters", async () => {
