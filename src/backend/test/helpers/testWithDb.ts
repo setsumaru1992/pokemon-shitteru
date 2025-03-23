@@ -4,7 +4,7 @@ import prisma from "../../prisma";
 
 import type { PrismaClientType } from "../../prisma";
 
-type TestFunc = (prisma: PrismaClientType) => Promise<void>;
+type TestFunc = (prisma: typeof prisma) => Promise<void>;
 type TableRow = {
   TABLE_NAME: string;
 };
