@@ -23,7 +23,14 @@ const eslintConfig = [
       // TypeScriptの厳格なチェック
       "@typescript-eslint/explicit-function-return-type": "error",
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/no-floating-promises": "off",
@@ -65,13 +72,17 @@ const eslintConfig = [
       // その他のコード品質ルール
       "no-console": ["error", { allow: ["warn", "error"] }],
       "no-debugger": "error",
-      "no-duplicate-imports": "error",
+      "no-duplicate-imports": "off",
+      "import/no-duplicates": "error",
+      "import/no-anonymous-default-export": "off",
       "no-unused-vars": "off", // TypeScriptのルールを使用
       "prefer-const": "error",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
       "react/prop-types": "off", // TypeScriptを使用するため無効化
       "react/react-in-jsx-scope": "off", // Next.jsでは不要
+
+      "@stylistic/no-trailing-spaces": "error",
     },
     settings: {
       "import/resolver": {

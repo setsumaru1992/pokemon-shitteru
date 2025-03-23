@@ -1,5 +1,6 @@
-import type { Answer } from "../../../prisma/generated/client";
 import { RoomRepository } from "../repositories/RoomRepository";
+
+import type { Answer } from "../../../prisma/generated/client";
 
 export class GetRoomAnswersQuery {
   private readonly roomRepository: RoomRepository;

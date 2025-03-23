@@ -6,7 +6,7 @@ import { RoomRepository } from "../repositories/RoomRepository";
 import { GetRoomByCodeQuery } from "./GetRoomByCodeQuery";
 
 describe("GetRoomByCodeQuery", () => {
-  testWithDb(async (prisma) => {
+  testWithDb(async (_) => {
     const roomRepository = new RoomRepository();
     const query = new GetRoomByCodeQuery(roomRepository);
 
