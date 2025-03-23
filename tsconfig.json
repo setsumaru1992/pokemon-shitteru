@@ -19,8 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@/prisma/client": ["./src/backend/prisma/generated/client"]
+      "@/*": ["./src/*"]
     },
     "types": ["vitest", "node"]
   },

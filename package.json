@@ -9,8 +9,9 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate --schema=./src/backend/prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
+    "prisma:migrate:test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' prisma migrate dev --schema=./src/backend/prisma/schema.prisma",
     "prisma:studio": "prisma studio --schema=./src/backend/prisma/schema.prisma",
-    "test": "vitest",
+    "test": "DATABASE_URL='mysql://root:password@test-db:3306/pokemon_quiz' vitest",
     "test:watch": "vitest watch",
     "test:coverage": "vitest run --coverage"
   },

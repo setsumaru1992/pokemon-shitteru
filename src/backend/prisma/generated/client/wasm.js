@@ -138,7 +138,7 @@ exports.Prisma.PokemonScalarFieldEnum = {
 exports.Prisma.RoomScalarFieldEnum = {
   id: 'id',
   roomCode: 'roomCode',
-  config: 'config',
+  quizConfig: 'quizConfig',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

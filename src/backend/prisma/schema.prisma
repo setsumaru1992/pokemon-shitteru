@@ -39,7 +39,7 @@ model Pokemon {
 model Room {
   id          Int      @id @default(autoincrement())
   roomCode    String   @unique @map("room_code") @db.VarChar(255)
-  config      Json     @map("config")
+  quizConfig  Json     @map("quiz_config")
   participants RoomParticipant[]
   answers     Answer[]
   createdAt   DateTime @default(now())
