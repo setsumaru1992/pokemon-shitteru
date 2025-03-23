@@ -10,20 +10,26 @@ export class CreateRoomCommand {
   private readonly repository: RoomRepository;
 
   constructor() {
-    // 大文字英数字のみを使用してランダムな8文字を生成
+    // 大文字英数字のみを使用してランダムな6文字を生成
     this.generateRoomCode = customAlphabet(
       "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-      8
+      6
     );
     this.repository = new RoomRepository();
   }
 
-  async execute(): Promise<Room> {
+  async execute(params: { generationId: string }): Promise<Room> {
     const maxRetries = 3;
     let retryCount = 0;
 
+    // 世代IDのバリデーション
+    const generationId = parseInt(params.generationId);
+    if (isNaN(generationId) || generationId < 1 || generationId > 9) {
+      throw new Error("指定された世代が見つかりません");
+    }
+
     const quizConfig: QuizConfig = {
-      generation: 1,
+      generation: generationId,
     };
 
     while (retryCount < maxRetries) {
