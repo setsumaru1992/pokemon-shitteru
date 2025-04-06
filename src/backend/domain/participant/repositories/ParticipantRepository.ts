@@ -1,34 +1,34 @@
-import { PrismaClient } from "../../../prisma/generated/client";
+import prisma from "../../../prisma";
 
-const prisma = new PrismaClient();
+import type { Participant, Prisma } from "../../../prisma/generated/client";
 
 export class ParticipantRepository {
-  async create(params: {
-    nickname: string;
-    sessionId: string;
-    expiresAt: Date;
-  }) {
+  async create(data: Prisma.ParticipantCreateInput): Promise<Participant> {
     return prisma.participant.create({
-      data: {
-        nickname: params.nickname,
-        sessionId: params.sessionId,
-        expiresAt: params.expiresAt,
-      },
+      data,
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<Participant | null> {
     return prisma.participant.findUnique({
-      where: {
-        id,
-      },
+      where: { id },
     });
   }
 
-  async findBySessionId(sessionId: string) {
+  async findBySessionId(sessionId: string): Promise<Participant | null> {
     return prisma.participant.findUnique({
+      where: { sessionId },
+    });
+  }
+
+  async findByRoomId(roomId: number): Promise<Participant[]> {
+    return prisma.participant.findMany({
       where: {
-        sessionId,
+        rooms: {
+          some: {
+            roomId,
+          },
+        },
       },
     });
   }
