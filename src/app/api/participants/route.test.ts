@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
 import { NextRequest } from "next/server";
+import { describe, it, expect, vi } from "vitest";
 
 import { CreateParticipantCommand } from "../../../backend/domain/participant/commands/CreateParticipantCommand";
 import { ParticipantRepository } from "../../../backend/domain/participant/repositories/ParticipantRepository";
@@ -29,7 +29,7 @@ describe("POST /api/participants", () => {
     };
 
     const mockRepository = new ParticipantRepository();
-    const mockCommand = new CreateParticipantCommand(mockRepository);
+    const _mockCommand = new CreateParticipantCommand(mockRepository);
 
     vi.mocked(CreateParticipantCommand.prototype.execute).mockResolvedValue(
       mockParticipant

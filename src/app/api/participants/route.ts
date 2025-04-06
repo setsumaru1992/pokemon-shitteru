@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 import { CreateParticipantCommand } from "../../../backend/domain/participant/commands/CreateParticipantCommand";
 import { ParticipantRepository } from "../../../backend/domain/participant/repositories/ParticipantRepository";
 
-export async function POST(request: NextRequest) {
+import type { NextRequest } from "next/server";
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     // リクエストボディの解析
     const body = await request.json();
