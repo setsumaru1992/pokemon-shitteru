@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
+import { ParticipantRepository } from "@/backend/domain/participant/repositories/ParticipantRepository";
 import { JoinRoomCommand } from "@/backend/domain/room/commands/JoinRoomCommand";
 import { RoomRepository } from "@/backend/domain/room/repositories/RoomRepository";
-import { ParticipantRepository } from "@/backend/domain/participant/repositories/ParticipantRepository";
+
+import type { NextRequest } from "next/server";
 
 export async function POST(
   request: NextRequest,
