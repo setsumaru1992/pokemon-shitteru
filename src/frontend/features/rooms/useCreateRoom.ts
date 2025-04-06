@@ -3,12 +3,6 @@ import { useState } from "react";
 import { createRoom } from "@/frontend/api/rooms";
 
 export type UseCreateRoom = {
-  mockReturnValue(arg0: {
-    error: null;
-    roomCode: null;
-    isLoading: boolean;
-    createRoom: (generationId: string) => Promise<void>;
-  }): unknown;
   error: string;
   roomCode: string;
   isLoading: boolean;

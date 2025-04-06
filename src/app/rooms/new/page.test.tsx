@@ -18,8 +18,8 @@ describe("NewRoomPage", () => {
 
   it("should render generation selection form", () => {
     (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
-      error: null,
-      roomCode: null,
+      error: "",
+      roomCode: "",
       isLoading: false,
       createRoom: vi.fn(),
     });
@@ -35,7 +35,7 @@ describe("NewRoomPage", () => {
     const mockResponse = { roomCode: "ABC123", id: "1" };
     const mockCreateRoom = vi.fn().mockResolvedValueOnce(mockResponse);
     (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
-      error: null,
+      error: "",
       roomCode: "ABC123",
       isLoading: false,
       createRoom: mockCreateRoom,
@@ -63,7 +63,7 @@ describe("NewRoomPage", () => {
       .mockRejectedValueOnce(new Error("世代が選択されていません"));
     (useCreateRoom as unknown as UseCreateRoom).mockReturnValue({
       error: "世代が選択されていません",
-      roomCode: null,
+      roomCode: "",
       isLoading: false,
       createRoom: mockCreateRoom,
     });
