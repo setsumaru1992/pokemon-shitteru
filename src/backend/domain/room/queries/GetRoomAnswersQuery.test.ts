@@ -6,8 +6,8 @@ import { GetRoomAnswersQuery } from "./GetRoomAnswersQuery";
 
 import type { PrismaClientType } from "../../../prisma";
 
-testWithDb(async (prisma: PrismaClientType) => {
-  describe("GetRoomAnswersQuery", () => {
+describe("GetRoomAnswersQuery", async () => {
+  testWithDb(async (prisma: PrismaClientType) => {
     it("should return empty array when room has no answers", async () => {
       const room = await prisma.room.create({
         data: {

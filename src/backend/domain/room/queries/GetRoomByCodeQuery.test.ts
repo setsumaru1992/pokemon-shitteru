@@ -5,7 +5,7 @@ import { RoomRepository } from "../repositories/RoomRepository";
 
 import { GetRoomByCodeQuery } from "./GetRoomByCodeQuery";
 
-describe("GetRoomByCodeQuery", () => {
+describe("GetRoomByCodeQuery", async () => {
   testWithDb(async (_) => {
     const roomRepository = new RoomRepository();
     const query = new GetRoomByCodeQuery(roomRepository);

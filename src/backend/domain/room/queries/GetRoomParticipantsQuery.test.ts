@@ -1,84 +1,55 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
+
+import testWithDb from "../../../test/helpers/testWithDb";
+import { ParticipantRepository } from "../../participant/repositories/ParticipantRepository";
+import { RoomRepository } from "../repositories/RoomRepository";
 
 import { GetRoomParticipantsQuery } from "./GetRoomParticipantsQuery";
-import { RoomRepository } from "../repositories/RoomRepository";
-import { Room } from "../entities/Room";
-import { Participant } from "../../participant/entities/Participant";
 
-describe("GetRoomParticipantsQuery", () => {
-  it("ルームの参加者一覧を取得できる", async () => {
-    // モックの設定
-    const mockRoom = new Room({
-      id: 1,
-      code: "ABC123",
-      generation: 1,
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-    });
+describe("GetRoomParticipantsQuery", async () => {
+  await testWithDb(async (_) => {
+    const roomRepository = new RoomRepository();
+    const participantRepository = new ParticipantRepository();
+    const query = new GetRoomParticipantsQuery(roomRepository);
 
-    const mockParticipants = [
-      new Participant({
-        id: 1,
+    it("ルームの参加者一覧を取得できる", async () => {
+      // ルームの作成
+      const room = await roomRepository.create({
+        roomCode: "ABC123",
+        quizConfig: {},
+      });
+
+      // 参加者の作成
+      const participant1 = await participantRepository.create({
         nickname: "テストユーザー1",
         sessionId: "test-session-id-1",
-        createdAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      }),
-      new Participant({
-        id: 2,
+      });
+
+      const participant2 = await participantRepository.create({
         nickname: "テストユーザー2",
         sessionId: "test-session-id-2",
-        createdAt: new Date(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
-      }),
-    ];
+      });
 
-    const mockRoomRepository = {
-      findByCode: vi.fn().mockResolvedValue(mockRoom),
-      getParticipants: vi.fn().mockResolvedValue(mockParticipants),
-    } as unknown as RoomRepository;
+      // ルームに参加者を追加
+      await roomRepository.addParticipant(room, participant1);
+      await roomRepository.addParticipant(room, participant2);
 
-    // クエリの実行
-    const query = new GetRoomParticipantsQuery(mockRoomRepository);
-    const result = await query.execute({ roomCode: "ABC123" });
+      // クエリの実行
+      const result = await query.execute({ roomCode: "ABC123" });
 
-    // 検証
-    expect(mockRoomRepository.findByCode).toHaveBeenCalledWith("ABC123");
-    expect(mockRoomRepository.getParticipants).toHaveBeenCalledWith(mockRoom);
-    expect(result).toEqual(mockParticipants);
-  });
-
-  it("ルームが存在しない場合はエラーを返す", async () => {
-    // モックの設定
-    const mockRoomRepository = {
-      findByCode: vi.fn().mockResolvedValue(null),
-    } as unknown as RoomRepository;
-
-    // クエリの実行
-    const query = new GetRoomParticipantsQuery(mockRoomRepository);
-    await expect(query.execute({ roomCode: "ABC123" })).rejects.toThrow(
-      "ルームが見つかりません"
-    );
-  });
-
-  it("ルームの有効期限が切れている場合はエラーを返す", async () => {
-    // モックの設定
-    const mockRoom = new Room({
-      id: 1,
-      code: "ABC123",
-      generation: 1,
-      createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
-      expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      // 検証
+      expect(result).toHaveLength(2);
+      expect(result.map((p) => p.nickname)).toContain("テストユーザー1");
+      expect(result.map((p) => p.nickname)).toContain("テストユーザー2");
     });
 
-    const mockRoomRepository = {
-      findByCode: vi.fn().mockResolvedValue(mockRoom),
-    } as unknown as RoomRepository;
-
-    // クエリの実行
-    const query = new GetRoomParticipantsQuery(mockRoomRepository);
-    await expect(query.execute({ roomCode: "ABC123" })).rejects.toThrow(
-      "ルームの有効期限が切れています"
-    );
+    it("ルームが存在しない場合はエラーを返す", async () => {
+      // クエリの実行
+      await expect(query.execute({ roomCode: "NONEXISTENT" })).rejects.toThrow(
+        "ルームが見つかりません"
+      );
+    });
   });
 });

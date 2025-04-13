@@ -6,8 +6,8 @@ import { CreateRoomCommand } from "./CreateRoomCommand";
 
 import type { QuizConfig } from "../types";
 
-testWithDb(async (prisma) => {
-  describe("CreateRoomCommand", () => {
+describe("CreateRoomCommand", () => {
+  testWithDb(async (prisma) => {
     it("should create a room with valid generation id", async () => {
       const command = new CreateRoomCommand();
       const room = await command.execute({ generationId: "1" });

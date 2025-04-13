@@ -1,9 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import testWithDb from "../../../test/helpers/testWithDb";
-import { Participant } from "../../participant/entities/Participant";
 import { ParticipantRepository } from "../../participant/repositories/ParticipantRepository";
-import { Room } from "../entities/Room";
 
 import { RoomRepository } from "./RoomRepository";
 

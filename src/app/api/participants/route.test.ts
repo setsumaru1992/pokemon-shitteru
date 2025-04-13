@@ -5,6 +5,7 @@ import { CreateParticipantCommand } from "../../../backend/domain/participant/co
 import { ParticipantRepository } from "../../../backend/domain/participant/repositories/ParticipantRepository";
 
 import { POST } from "./route";
+import testWithDb from "@/backend/test/helpers/testWithDb";
 
 // モックの作成
 vi.mock(
@@ -15,82 +16,93 @@ vi.mock(
 );
 
 describe("POST /api/participants", () => {
-  it("新しい参加者を作成できる", async () => {
-    // モックの設定
-    const createdAt = new Date();
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  testWithDb(async (_) => {
+    it("新しい参加者を作成できる", async () => {
+      // モックの設定
+      const createdAt = new Date();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
-    const mockParticipant = {
-      id: 1,
-      nickname: "テストユーザー",
-      sessionId: "test-session-id",
-      createdAt,
-      expiresAt,
-    };
+      const mockParticipant = {
+        id: 1,
+        nickname: "テストユーザー",
+        sessionId: "test-session-id",
+        createdAt,
+        expiresAt,
+      };
 
-    const mockRepository = new ParticipantRepository();
-    const _mockCommand = new CreateParticipantCommand(mockRepository);
+      const mockRepository = new ParticipantRepository();
+      const _mockCommand = new CreateParticipantCommand(mockRepository);
 
-    vi.mocked(CreateParticipantCommand.prototype.execute).mockResolvedValue(
-      mockParticipant
-    );
+      vi.mocked(CreateParticipantCommand.prototype.execute).mockResolvedValue(
+        mockParticipant
+      );
 
-    // リクエストの作成
-    const request = new NextRequest("http://localhost:3000/api/participants", {
-      method: "POST",
-      body: JSON.stringify({ nickname: "テストユーザー" }),
+      // リクエストの作成
+      const request = new NextRequest(
+        "http://localhost:3000/api/participants",
+        {
+          method: "POST",
+          body: JSON.stringify({ nickname: "テストユーザー" }),
+        }
+      );
+
+      // APIの呼び出し
+      const response = await POST(request);
+      const data = await response.json();
+
+      // レスポンスの検証
+      expect(response.status).toBe(200);
+      expect(data.id).toBe(mockParticipant.id);
+      expect(data.nickname).toBe(mockParticipant.nickname);
+      expect(data.sessionId).toBe(mockParticipant.sessionId);
+      expect(new Date(data.createdAt)).toEqual(mockParticipant.createdAt);
+      expect(new Date(data.expiresAt)).toEqual(mockParticipant.expiresAt);
+      expect(CreateParticipantCommand.prototype.execute).toHaveBeenCalledWith({
+        nickname: "テストユーザー",
+      });
     });
 
-    // APIの呼び出し
-    const response = await POST(request);
-    const data = await response.json();
+    it("ニックネームが空の場合はエラーを返す", async () => {
+      // モックの設定
+      vi.mocked(CreateParticipantCommand.prototype.execute).mockRejectedValue(
+        new Error("ニックネームは必須です")
+      );
 
-    // レスポンスの検証
-    expect(response.status).toBe(200);
-    expect(data.id).toBe(mockParticipant.id);
-    expect(data.nickname).toBe(mockParticipant.nickname);
-    expect(data.sessionId).toBe(mockParticipant.sessionId);
-    expect(new Date(data.createdAt)).toEqual(mockParticipant.createdAt);
-    expect(new Date(data.expiresAt)).toEqual(mockParticipant.expiresAt);
-    expect(CreateParticipantCommand.prototype.execute).toHaveBeenCalledWith({
-      nickname: "テストユーザー",
-    });
-  });
+      // リクエストの作成
+      const request = new NextRequest(
+        "http://localhost:3000/api/participants",
+        {
+          method: "POST",
+          body: JSON.stringify({ nickname: "" }),
+        }
+      );
 
-  it("ニックネームが空の場合はエラーを返す", async () => {
-    // モックの設定
-    vi.mocked(CreateParticipantCommand.prototype.execute).mockRejectedValue(
-      new Error("ニックネームは必須です")
-    );
+      // APIの呼び出し
+      const response = await POST(request);
+      const data = await response.json();
 
-    // リクエストの作成
-    const request = new NextRequest("http://localhost:3000/api/participants", {
-      method: "POST",
-      body: JSON.stringify({ nickname: "" }),
+      // レスポンスの検証
+      expect(response.status).toBe(400);
+      expect(data).toEqual({ error: "ニックネームは必須です" });
     });
 
-    // APIの呼び出し
-    const response = await POST(request);
-    const data = await response.json();
+    it("リクエストボディが不正な場合はエラーを返す", async () => {
+      // リクエストの作成
+      const request = new NextRequest(
+        "http://localhost:3000/api/participants",
+        {
+          method: "POST",
+          body: "invalid json",
+        }
+      );
 
-    // レスポンスの検証
-    expect(response.status).toBe(400);
-    expect(data).toEqual({ error: "ニックネームは必須です" });
-  });
+      // APIの呼び出し
+      const response = await POST(request);
+      const data = await response.json();
 
-  it("リクエストボディが不正な場合はエラーを返す", async () => {
-    // リクエストの作成
-    const request = new NextRequest("http://localhost:3000/api/participants", {
-      method: "POST",
-      body: "invalid json",
+      // レスポンスの検証
+      expect(response.status).toBe(400);
+      expect(data.error).toContain("Unexpected token");
     });
-
-    // APIの呼び出し
-    const response = await POST(request);
-    const data = await response.json();
-
-    // レスポンスの検証
-    expect(response.status).toBe(400);
-    expect(data.error).toContain("Unexpected token");
   });
 });
