@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useCreateParticipant } from "@/frontend/features/participants/useCreateParticipant";
+import { useJoinRoom } from "@/frontend/features/rooms/useJoinRoom";
 
 import type { ReactNode } from "react";
 
@@ -14,13 +15,29 @@ type Props = {
 
 const JoinRoomPage = ({ params }: Props): ReactNode => {
   const [nickname, setNickname] = useState("");
-  const { error, participantId, isLoading, createParticipant } =
-    useCreateParticipant();
+  const {
+    error: participantError,
+    participantId,
+    isLoading: isParticipantLoading,
+    createParticipant,
+  } = useCreateParticipant();
+
+  const {
+    error: joinError,
+    isLoading: isJoinLoading,
+    joinRoom,
+  } = useJoinRoom();
 
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
-    await createParticipant(nickname);
+    const result = await createParticipant(nickname);
+    if (result?.id) {
+      await joinRoom(params.roomCode, parseInt(result.id, 10));
+    }
   };
+
+  const isLoading = isParticipantLoading || isJoinLoading;
+  const error = participantError || joinError;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -58,7 +75,7 @@ const JoinRoomPage = ({ params }: Props): ReactNode => {
         </button>
       </form>
 
-      {participantId && (
+      {participantId && !joinError && (
         <div className="mt-8 p-4 bg-green-50 rounded-md">
           <h2 className="text-lg font-medium text-green-800">
             参加者を作成しました！
