@@ -1,97 +1,127 @@
 import { describe, it, expect } from "vitest";
 
-import testWithDb from "../../../test/helpers/testWithDb";
-import { ParticipantRepository } from "../../participant/repositories/ParticipantRepository";
-import { RoomRepository } from "../repositories/RoomRepository";
-
+import testWithDb from "@/backend/test/helpers/testWithDb";
+import { RoomRepository } from "@/backend/domain/room/repositories/RoomRepository";
+import { ParticipantRepository } from "@/backend/domain/participant/repositories/ParticipantRepository";
 import { JoinRoomCommand } from "./JoinRoomCommand";
 
 describe("JoinRoomCommand", () => {
-  testWithDb(async (_) => {
-    const roomRepository = new RoomRepository();
-    const participantRepository = new ParticipantRepository();
-    const command = new JoinRoomCommand(roomRepository, participantRepository);
+  testWithDb(async (prisma) => {
+    it("should join a room with valid room code and participant id", async () => {
+      const roomRepository = new RoomRepository();
+      const participantRepository = new ParticipantRepository();
+      const command = new JoinRoomCommand(
+        roomRepository,
+        participantRepository
+      );
 
-    it("参加者をルームに追加できる", async () => {
-      // ルームの作成
+      // 事前準備：ルームと参加者を作成
       const room = await roomRepository.create({
         roomCode: "ABC123",
-        quizConfig: {},
+        quizConfig: {
+          generationId: 1,
+        },
       });
-
-      // 参加者の作成
       const participant = await participantRepository.create({
         nickname: "テストユーザー",
         sessionId: "test-session-id",
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
 
-      // コマンドの実行
-      await command.execute({
-        roomCode: "ABC123",
+      // コマンド実行
+      const result = await command.execute({
+        roomCode: room.roomCode,
         participantId: participant.id,
       });
 
-      // 検証：参加者がルームに追加されたことを確認
-      const participants = await roomRepository.getParticipants(room);
+      // 検証
+      expect(result.roomCode).toBe(room.roomCode);
+      expect(result.participantId).toBe(participant.id);
+
+      // ルームに参加者が追加されていることを確認
+      const participants = await roomRepository.getParticipants(room.id);
       expect(participants).toHaveLength(1);
       expect(participants[0].id).toBe(participant.id);
     });
 
-    it("ルームが存在しない場合はエラーを返す", async () => {
-      // 参加者の作成
+    it("should throw error when room code is invalid", async () => {
+      const roomRepository = new RoomRepository();
+      const participantRepository = new ParticipantRepository();
+      const command = new JoinRoomCommand(
+        roomRepository,
+        participantRepository
+      );
+
       const participant = await participantRepository.create({
         nickname: "テストユーザー",
         sessionId: "test-session-id-2",
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
 
-      // コマンドの実行
       await expect(
         command.execute({
-          roomCode: "NONEXISTENT",
+          roomCode: "invalid-code",
           participantId: participant.id,
         })
       ).rejects.toThrow("ルームが見つかりません");
     });
 
-    it("参加者が存在しない場合はエラーを返す", async () => {
-      // ルームの作成
-      await roomRepository.create({
+    it("should throw error when participant id is invalid", async () => {
+      const roomRepository = new RoomRepository();
+      const participantRepository = new ParticipantRepository();
+      const command = new JoinRoomCommand(
+        roomRepository,
+        participantRepository
+      );
+
+      const room = await roomRepository.create({
         roomCode: "ABC123",
-        quizConfig: {},
+        quizConfig: {
+          generationId: 1,
+        },
       });
 
-      // コマンドの実行
       await expect(
         command.execute({
-          roomCode: "ABC123",
+          roomCode: room.roomCode,
           participantId: 999,
         })
       ).rejects.toThrow("参加者が見つかりません");
     });
 
-    it("参加者の有効期限が切れている場合はエラーを返す", async () => {
-      // ルームの作成
-      await roomRepository.create({
-        roomCode: "ABC123",
-        quizConfig: {},
-      });
+    it("should throw error when participant is already in the room", async () => {
+      const roomRepository = new RoomRepository();
+      const participantRepository = new ParticipantRepository();
+      const command = new JoinRoomCommand(
+        roomRepository,
+        participantRepository
+      );
 
-      // 有効期限切れの参加者を作成
+      const room = await roomRepository.create({
+        roomCode: "ABC123",
+        quizConfig: {
+          generationId: 1,
+        },
+      });
       const participant = await participantRepository.create({
         nickname: "テストユーザー",
         sessionId: "test-session-id-3",
-        expiresAt: new Date(Date.now() - 1000), // 有効期限切れ
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
       });
 
-      // コマンドの実行
+      // 1回目の参加
+      await command.execute({
+        roomCode: room.roomCode,
+        participantId: participant.id,
+      });
+
+      // 2回目の参加（エラーになるはず）
       await expect(
         command.execute({
-          roomCode: "ABC123",
+          roomCode: room.roomCode,
           participantId: participant.id,
         })
-      ).rejects.toThrow("参加者の有効期限が切れています");
+      ).rejects.toThrow("すでにルームに参加しています");
     });
   });
 });
